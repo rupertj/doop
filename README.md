@@ -6,8 +6,6 @@
  \___/ \___/ \___/|_|
 ```
 
-This project is an experiment in vibe coding.
-
 Had enough of copy and pasting the git commands from drupal.org when switching
 between issues? Me too.
 
@@ -26,8 +24,16 @@ doop <issue-number>
 doop -d <issue-number>
 ```
 
+## Push current issue branch:
+
+```
+doop push
+```
+
 ## Force delete issue branch and remote:
 
 ```
 doop -D <issue-number>
 ```
+
+This project is an experiment in (mostly) vibe coding with Claude Code.
