@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+project=$(basename "$PWD")
+
+case "${1:-}" in
+    -d|-D)
+        delete_flag="$1"
+        shift
+        case "${1:-}" in
+            ''|*[!0-9]*)
+                echo "Usage: doop $delete_flag <issue-number>" >&2
+                exit 1
+                ;;
+        esac
+        issue="$1"
+        remote="${project}-${issue}"
+        remote_and_branch=$(git branch -r | grep -E "${issue}.+${issue}")
+        branch="${remote_and_branch#*/}"
+        git branch "$delete_flag" "$branch"
+        git remote remove "$remote"
+        ;;
+    ''|*[!0-9]*)
+        echo "Usage: doop <issue-number>" >&2
+        exit 1
+        ;;
+    *)
+        issue="$1"
+        remote="${project}-${issue}"
+        if ! git remote get-url "$remote" &>/dev/null; then
+            git remote add "$remote" "git@git.drupal.org:issue/${remote}.git"
+        fi
+        git fetch "$remote"
+        remote_and_branch=$(git branch -r | grep -E "${issue}.+${issue}")
+        branch="${remote_and_branch#*/}"
+        git fetch "$remote" "$branch":"$branch"
+        ;;
+esac
