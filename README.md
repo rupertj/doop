@@ -40,3 +40,13 @@ doop push
 ```
 
 This project is an experiment in (mostly) vibe coding with Claude Code.
+
+## Verbose output
+
+Use `-v` before any command to see the git commands being run. This is useful 
+for seeing what's going wrong.
+
+```
+doop -v <issue-number>
+doop -v push
+```
