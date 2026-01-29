@@ -37,6 +37,16 @@ case "${1:-}" in
         git_cmd branch "$delete_flag" "$branch"
         git_cmd remote remove "$remote"
         ;;
+    push)
+        branch=$(git_cmd rev-parse --abbrev-ref HEAD)
+        issue=$(echo "$branch" | grep -oE '[0-9]+' | head -1)
+        if [ -z "$issue" ]; then
+            echo "Could not determine issue number from branch '$branch'" >&2
+            exit 1
+        fi
+        remote="${project}-${issue}"
+        git_cmd push "$remote" "$branch"
+        ;;
     ''|*[!0-9]*)
         echo "Usage: doop <issue-number>" >&2
         exit 1
