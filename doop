@@ -2,7 +2,23 @@
 
 set -e
 
+verbose=0
+
+git_cmd() {
+    if [ "$verbose" -eq 1 ]; then
+        echo "+ git $*" >&2
+    fi
+    git "$@"
+}
+
 project=$(basename "$PWD")
+
+case "${1:-}" in
+    -v)
+        verbose=1
+        shift
+        ;;
+esac
 
 case "${1:-}" in
     -d|-D)
@@ -16,10 +32,10 @@ case "${1:-}" in
         esac
         issue="$1"
         remote="${project}-${issue}"
-        remote_and_branch=$(git branch -r | grep -E "${issue}.+${issue}")
+        remote_and_branch=$(git_cmd branch -r | grep -E "${issue}.+${issue}")
         branch="${remote_and_branch#*/}"
-        git branch "$delete_flag" "$branch"
-        git remote remove "$remote"
+        git_cmd branch "$delete_flag" "$branch"
+        git_cmd remote remove "$remote"
         ;;
     ''|*[!0-9]*)
         echo "Usage: doop <issue-number>" >&2
@@ -28,12 +44,12 @@ case "${1:-}" in
     *)
         issue="$1"
         remote="${project}-${issue}"
-        if ! git remote get-url "$remote" &>/dev/null; then
-            git remote add "$remote" "git@git.drupal.org:issue/${remote}.git"
+        if ! git_cmd remote get-url "$remote" &>/dev/null; then
+            git_cmd remote add "$remote" "git@git.drupal.org:issue/${remote}.git"
         fi
-        git fetch "$remote"
-        remote_and_branch=$(git branch -r | grep -E "${issue}.+${issue}")
+        git_cmd fetch "$remote"
+        remote_and_branch=$(git_cmd branch -r | grep -E "${issue}.+${issue}")
         branch="${remote_and_branch#*/}"
-        git fetch "$remote" "$branch":"$branch"
+        git_cmd fetch "$remote" "$branch":"$branch"
         ;;
 esac
