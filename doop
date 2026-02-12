@@ -48,7 +48,13 @@ case "${1:-}" in
         git_cmd push "$remote" "$branch"
         ;;
     ''|*[!0-9]*)
-        echo "Usage: doop <issue-number>" >&2
+        cat >&2 <<'EOF'
+Usage:
+  doop [-v] <issue-number>     Switch to issue branch
+  doop [-v] push               Push to issue remote
+  doop [-v] -d <issue-number>  Delete issue branch (safe)
+  doop [-v] -D <issue-number>  Force delete issue branch
+EOF
         exit 1
         ;;
     *)
