@@ -61,5 +61,6 @@ case "${1:-}" in
         remote_and_branch=$(git_cmd branch -r | grep -E "${issue}.+${issue}")
         branch="${remote_and_branch#*/}"
         git_cmd fetch "$remote" "$branch":"$branch"
+        git_cmd checkout "$branch"
         ;;
 esac
