@@ -12,8 +12,12 @@ between issues? Me too.
 To install, check the repo out somewhere and symlink /usr/local/bin/doop to doop
 in the checkout.
 
-NB: All these commands assume your clone of the repo is in a directory with the
+NB: All commands assume your clone of the repo is in a directory with the
 same name as the repo.
+
+This project is an experiment in (mostly) vibe coding with Claude Code.
+
+Instructions for use:
 
 ## Switch issue:
 
@@ -38,8 +42,6 @@ doop -D <issue-number>
 ```
 doop push
 ```
-
-This project is an experiment in (mostly) vibe coding with Claude Code.
 
 ## Verbose output
 
