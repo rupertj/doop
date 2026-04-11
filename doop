@@ -32,8 +32,7 @@ case "${1:-}" in
         esac
         issue="$1"
         remote="${project}-${issue}"
-        remote_and_branch=$(git_cmd branch -r | grep -E "${issue}.+${issue}")
-        branch="${remote_and_branch#*/}"
+        branch=$(git_cmd branch --list "*${issue}*" | tr -d ' *')
         git_cmd branch "$delete_flag" "$branch"
         git_cmd remote remove "$remote"
         ;;
