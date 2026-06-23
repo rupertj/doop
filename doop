@@ -63,8 +63,28 @@ EOF
             git_cmd remote add "$remote" "git@git.drupal.org:issue/${remote}.git"
         fi
         git_cmd fetch "$remote"
-        remote_and_branch=$(git_cmd branch -r | grep -E "${issue}.+${issue}")
+        remote_branches=()
+        while IFS= read -r line; do
+            [ -n "$line" ] && remote_branches+=("$line")
+        done < <(git_cmd branch -r | grep -E "${issue}.+${issue}")
+        if [ ${#remote_branches[@]} -eq 0 ]; then
+            echo "No branches found for issue $issue" >&2
+            exit 1
+        elif [ ${#remote_branches[@]} -eq 1 ]; then
+            remote_and_branch="${remote_branches[0]}"
+        else
+            PS3="Choose a branch: "
+            select remote_and_branch in "${remote_branches[@]}"; do
+                [ -n "$remote_and_branch" ] && break
+                echo "Invalid selection, please try again." >&2
+            done
+        fi
         branch="${remote_and_branch#*/}"
+        current_branch=$(git_cmd rev-parse --abbrev-ref HEAD)
+        if [ "$branch" = "$current_branch" ]; then
+            echo "Already on branch '$branch'."
+            exit 0
+        fi
         git_cmd fetch "$remote" "$branch":"$branch"
         git_cmd checkout "$branch"
         ;;
